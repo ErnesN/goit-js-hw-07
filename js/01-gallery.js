@@ -4,9 +4,8 @@ import { galleryItems } from './gallery-items.js';
 console.log(galleryItems);
 const galleryEl = document.querySelector(".gallery");
 
-const createGalleryItems = (items) => {
-    return galleryItems.map(({ preview, original, description }) => {
-        return `<div class="gallery__item">
+const createGalleryItems = ({ preview, original, description }) => 
+  `<div class="gallery__item">
   <a class="gallery__link" href="${original}">
     <img
       class="gallery__image"
@@ -16,6 +15,26 @@ const createGalleryItems = (items) => {
     />
   </a>
 </div>`;
-    }).join("");
-}
-galleryEl.insertAdjacentHTML("beforeend", createGalleryItems(galleryItems));
+
+const makeGalleryItem = galleryItems.map(createGalleryItems).join('');
+galleryEl.insertAdjacentHTML('beforeend', makeGalleryItem);
+
+
+const onGalleryImageClick = e => {
+  e.preventDefault();
+  if (e.code === 'Escape') {
+    modal.close();
+  }
+
+  const createMarkupModalElementsGallery = basicLightbox.create(`
+    <img src="${e.target.dataset.source}" width="auto" height="auto">`);
+  createMarkupModalElementsGallery.show();
+
+  document.addEventListener('keydown', e => {
+    if (e.code === 'Escape') {
+      createMarkupModalElementsGallery.close();
+    }
+  });
+};
+
+galleryEl.addEventListener('click', onGalleryImageClick);
